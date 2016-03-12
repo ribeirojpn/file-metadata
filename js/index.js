@@ -1,35 +1,34 @@
+'use strict';
 var main = function () {
-  var file;
+  var files;
   console.log('ready');
 
   $('#file').on('change',function (event) {
-    file = event.target.files;
-    console.log(file);
+    files = event.target.files;
   });
+
   $('form').on('submit',function (event) {
+    event.stopPropagation();
     event.preventDefault();
 
-    var data = new FormData();
-
-    $.each(file, function (key, value) {
-      data.append(key,value);
-    });
-    console.log(data);
+    var formData = new FormData();
+    formData.append('data',files[0]);
 
     $.ajax({
-      url: 'http://localhost:3000' + '/filedata',
+      url: window.location.origin + '/filedata',
       type: 'POST',
-      data: data,
-      contentType: false,
-      processData: false,
+			data: formData,
+			cache: false,
+			processData: false,
+			contentType: false,
       success: function (data) {
-        alert('file size: ' + data.fileSize);
+        alert('file size: ' + data.size);
       },
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function (jqXHR, textStatus, errorThrown) {
 				alert('ERRORS: ' + textStatus);
 			}
-    })
-  })
+    });
+  });
 }
 
 $(document).ready(main);
